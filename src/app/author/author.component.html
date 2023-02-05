@@ -1,0 +1,138 @@
+<div>
+  <div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col" (click)="sort('author.lastName')" class="pointer">Автор A-я</th>
+          <th scope="col">Книг в базе</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let author of arrayAuthor ; let i=index">
+          <td class="table-secondary">{{author.author.lastName}} {{author.author.firstName |
+            slice:0:1}}.{{author.author.secondName | slice:0:1}}.
+          </td>
+          <td class="table-secondary">
+            {{author.books.length}}
+          </td>
+          <td class="table-secondary">
+            <button class="btn btn-secondary"
+              (click)="editAuthorWitBooks(author,author.books.length, i)">Редактировать</button>
+          </td>
+          <td class="table-secondary">
+            <button class="btn btn-secondary" (click)="delAuthor(i)">Удалить</button>
+          </td>
+          <td class="table-secondary">
+            <button class="btn btn-secondary" (click)="detailsAutor(author)">Детали</button>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <button (click)="addMenuAuthorAll()" class="btn btn-secondary" *ngIf="btnMenuAuthor">Добавить автора</button>
+  </div>
+  <form novalidate [formGroup]="authorWitBooks" *ngIf="addMenuAuthor">
+
+    <div [formGroup]="author" class="input-group">
+      <div class="input-group-text">
+        Фамилия
+        <br>
+        <input type="text" required formControlName="lastName" class="form-control">
+        <div *ngIf="author.get('lastName')?.hasError('nameValidator') && author.get('lastName')?.touched">Ошибка ввода
+        </div>
+      </div>
+      <br>
+      <div class="input-group-text">
+        Имя
+        <br>
+        <input type="text" required formControlName="firstName" class="form-control">
+        <div *ngIf="author.get('firstName')?.hasError('nameValidator') && author.get('firstName')?.touched">Ошибка ввода
+        </div>
+      </div>
+      <br>
+      <div class="input-group-text">
+        Отчество
+        <br>
+        <input type="text" required formControlName="secondName" class="form-control">
+        <div *ngIf="author.get('secondName')?.hasError('nameValidator') && author.get('secondName')?.touched">Ошибка
+          ввода
+        </div>
+      </div>
+      <br>
+      <div class="input-group-text">
+        Дата рождения
+        <br>
+        <input type="date" required formControlName="birthDate" class="form-control">
+      </div>
+      <br>
+    </div>
+
+    <u>Книги автора:</u>
+    <div class="container" formArrayName="books" *ngFor="let book of books.controls; let i=index">
+      <form [formGroupName]="i" class="input-group" onsubmit="return false">
+        <div class="input-group-text">
+          Название Книги:
+          <br>
+          <input type="text" required formControlName="nameBook" class="form-control">
+        </div>
+        <div class="input-group-text">
+          Количество Страниц:
+          <br>
+          <input type="number" required formControlName="amountPages" class="form-control">
+        </div>
+        <div class="input-group-text">
+          Жанр:
+          <br>
+          <input type="text" required formControlName="genre" class="form-control">
+        </div>
+        <div>
+          <!-- <button class="btn btn-secondary">Редактировать</button> -->
+        </div>
+        <div>
+          <button class="btn btn-secondary" (click)="delBook(i)">Удалить</button>
+        </div>
+
+      </form>
+
+
+    </div>
+    <button (click)="addBook()" class="btn btn-secondary">Добавить книгу</button>
+    <button (click)="addAuthorWitBooks(authorWitBooks)" [disabled]="authorWitBooks.invalid " class="btn btn-secondary"
+      *ngIf="saveEdit">Сохранить</button>
+    <button (click)="exitEdit()" *ngIf="!saveEdit" class="btn btn-secondary">Выйти без сохранения</button>
+    <button (click)="saveAuthorWitBooks(authorWitBooks)" *ngIf="!saveEdit" class="btn btn-secondary">Сохранить
+      изменения</button>
+
+  </form>
+
+  <div *ngIf="addDetMenu" class="container">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button class="btn-close" (click)="closeDetMenu()"> </button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" class="table-secondary">ФИО</th>
+          <th scope="col" class="table-secondary">Дата рождения</th>
+          <th scope="col" class="table-secondary" *ngFor="let book of detAutor.books; let i=index">Название книги</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="table-secondary">
+            {{detAutor.author.lastName +" "+ detAutor.author.firstName +" "+ detAutor.author.secondName}}
+          </td>
+          <td class="table-secondary">
+            {{detAutor.author.birthDate}}
+          </td>
+          <td *ngFor="let book of detAutor.books; let i=index" class="table-secondary">
+            {{book.nameBook +" "+book.amountPages +" "+book.genre}}
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+</div>

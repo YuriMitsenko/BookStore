@@ -1,0 +1,11 @@
+* {
+  margin-left: 10px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+table {
+  border-collapse: initial;
+}

@@ -1,0 +1,11 @@
+*{
+  margin-left: 10px ;
+}
+
+table {
+  border-collapse: initial;
+}
+
+td {
+  vertical-align: middle
+}
