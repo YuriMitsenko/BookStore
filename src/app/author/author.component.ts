@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DataService } from '../shared/data.service';
 import { TAuthorWitBooks } from '../shared/interfaces.service';
 import { nameFunc } from './custom-validators';
 
@@ -10,6 +11,8 @@ import { nameFunc } from './custom-validators';
   styleUrls: ['./author.component.css']
 })
 export class AuthorComponent implements OnInit {
+
+  constructor(private dataService: DataService) { }
 
   addMenuAuthor: boolean = false;
   addDetMenu: boolean = false;
@@ -27,9 +30,14 @@ export class AuthorComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.arrayAuthor);
-    if (localStorage['arAuthor'] != undefined)
-      this.arrayAuthor = JSON.parse(localStorage['arAuthor']);
-    console.log(this.arrayAuthor);
+    this.dataService.getauthorWitBooks().subscribe((res: TAuthorWitBooks[]) => {
+      console.log(res),
+        this.arrayAuthor = res
+    });
+
+    // if (localStorage['arAuthor'] != undefined)
+    //   this.arrayAuthor = JSON.parse(localStorage['arAuthor']);
+    // console.log(this.arrayAuthor);
 
 
     this.author = new FormGroup({
@@ -70,20 +78,22 @@ export class AuthorComponent implements OnInit {
   addAuthorWitBooks(form: any) { // сохранить автора и книги в мас и в localSt
     console.log(form.value);
     this.arrayAuthor.push(form.value);
-    localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
+    // localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
+    this.dataService.setauthorWitBooks(this.arrayAuthor);
     this.addMenuAuthor = !this.addMenuAuthor;
     this.authorWitBooks.reset();
     this.books.removeAt(form);
-   }
+  }
 
   delBook(index: number) {  // удалить один arrayinput книга
     console.log(index);
     this.books.removeAt(index);
   }
 
-  delAuthor(index: number) { // удалить автора с общей таблицы и перезап localSt
+  delAuthor(index: number) { // удалить автора с общей таблицы и перезап
     this.arrayAuthor.splice(index, 1);
-    localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
+    this.dataService.setauthorWitBooks(this.arrayAuthor);
+    // localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
   }
 
   detailsAutor(author: any) { // открыть меню детали
@@ -96,8 +106,8 @@ export class AuthorComponent implements OnInit {
     this.addDetMenu = !this.addDetMenu;
   }
 
-  editAuthorWitBooks(author: TAuthorWitBooks, amount:number, index:number) {
-    this.saveEdit= false;
+  editAuthorWitBooks(author: TAuthorWitBooks, amount: number, index: number) {
+    this.saveEdit = false;
     this.idAuthor = index;
     console.log(author);
     this.addMenuAuthor = true;
@@ -114,9 +124,9 @@ export class AuthorComponent implements OnInit {
       birthDate: author.author.birthDate
     });
 
-     console.log(this.books.value.length)
+    console.log(this.books.value.length)
 
-    for (let i = 0; i < this.amount-1; i++){
+    for (let i = 0; i < this.amount - 1; i++) {
       this.addBook()
     }
 
@@ -133,33 +143,37 @@ export class AuthorComponent implements OnInit {
 
   }
 
-  saveAuthorWitBooks(form:any){
-      console.log(form, this.idAuthor);
-      this.arrayAuthor.push(form.value);
-      localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
-      this.arrayAuthor.splice(this.idAuthor, 1);
-      localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
-      this.authorWitBooks.reset();
-      this.addMenuAuthor =  !this.addMenuAuthor;
-      this.idAuthor = 0;
-      this.btnMenuAuthor = true;
-      this.books.removeAt(form);
-    }
+  saveAuthorWitBooks(form: any) { // сохранить после изменения автора
+    console.log(form, this.idAuthor);
+    this.arrayAuthor.push(form.value);
+    // this.dataService.setauthorWitBooks(this.arrayAuthor);
+    // localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
+    // this.arrayAuthor.splice(this.idAuthor, 1);
+    this.dataService.setauthorWitBooks(this.arrayAuthor);
+    // localStorage['arAuthor'] = JSON.stringify(this.arrayAuthor);
+    this.authorWitBooks.reset();
+    this.addMenuAuthor = !this.addMenuAuthor;
+    this.idAuthor = 0;
+    this.btnMenuAuthor = true;
+    this.books.removeAt(form);
 
-  exitEdit(){
+  }
+
+  exitEdit() {
     this.authorWitBooks.reset();
     this.addMenuAuthor = false;
-        for (let i = 0; i < this.amount; i++){
+    for (let i = 0; i < this.amount; i++) {
       this.books.removeAt(i);
     }
     this.amount = 0;
     this.btnMenuAuthor = true;
-    }
+    this.saveEdit = !this.saveEdit;
+  }
 
   sort(property: string): void {
     console.log(property);
-    this.filterArrayAuthor = this.arrayAuthor.sort((a,b) =>
-    getDescendantProp(a, property) > getDescendantProp(b, property) ? 1 : -1
+    this.filterArrayAuthor = this.arrayAuthor.sort((a, b) =>
+      getDescendantProp(a, property) > getDescendantProp(b, property) ? 1 : -1
     )
     this.arrayAuthor = this.filterArrayAuthor
   }

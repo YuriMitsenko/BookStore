@@ -1,25 +1,27 @@
-<div *ngFor="let typegener of books3" class="table">
+<div class="container-fluid col-9">
+<div *ngFor="let typegener of books3" class="table px-5">
   <br>
   <u> Жанр: {{typegener.gener}}</u>
-  <table class="table table-hover ">
+  <table class="table table-hover table-responsive ">
 
     <thead>
       <tr>
-        <th scope="col">Фамилия</th>
-        <th scope="col">Название Книги </th>
-        <th scope="col">Кол-во страниц</th>
+        <th scope="col-3">Фамилия</th>
+        <th scope="col-3">Название Книги </th>
+        <th scope="col-1">Кол-во страниц</th>
       </tr>
     </thead>
     <tbody *ngFor="let book of typegener.booksList" class="table-success">
-      <td class="table-secondary " >
+      <td class="table-secondary col-3" >
         {{book.lastName}}
       </td>
-      <td class="table-secondary">
+      <td class="table-secondary col-3">
         {{book.nameBook}}
       </td>
-      <td class="table-secondary">
+      <td class="table-secondary col-1">
         {{book.amountPages}}
       </td>
     </tbody>
   </table>
+</div>
 </div>
